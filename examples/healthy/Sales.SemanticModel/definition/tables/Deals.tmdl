@@ -1,0 +1,103 @@
+table Deals
+
+	measure Deals = COUNTROWS(Deals)
+		formatString: #,0
+
+	/// Deals at the stage of the current row. Resolves the row with MAX(Order):
+	/// the visual must give it exactly one stage.
+	measure 'Deals at stage' =
+			VAR _order = MAX(Stages[Order])
+			RETURN CALCULATE(COUNTROWS(Deals), Stages[Order] = _order)
+		formatString: #,0
+
+	measure 'Deals Segment 1' =
+			VAR _order = MAX(Stages[Order])
+			RETURN CALCULATE(COUNTROWS(Deals), Stages[Order] = _order, Deals[Segment] = "SMB")
+		formatString: #,0
+
+	measure 'Deals Segment 2' =
+			VAR _order = MAX(Stages[Order])
+			RETURN CALCULATE(COUNTROWS(Deals), Stages[Order] = _order, Deals[Segment] = "Enterprise")
+		formatString: #,0
+
+	measure 'Avg days Segment 1' =
+			VAR _order = MAX(Stages[Order])
+			RETURN CALCULATE(AVERAGE(Deals[Days]), Stages[Order] = _order, Deals[Segment] = "SMB")
+		formatString: #,0.0
+
+	measure 'Avg days Segment 2' =
+			VAR _order = MAX(Stages[Order])
+			RETURN CALCULATE(AVERAGE(Deals[Days]), Stages[Order] = _order, Deals[Segment] = "Enterprise")
+		formatString: #,0.0
+
+	column DealId
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [DealId]
+
+	column StageId
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [StageId]
+
+	column Segment
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Segment]
+
+	column Days
+		dataType: int64
+		formatString: 0
+		summarizeBy: sum
+		sourceColumn: [Days]
+
+	partition Deals = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "DealId", INTEGER, "StageId", INTEGER, "Segment", STRING, "Days", INTEGER,
+				    {
+								        {1, 4, "SMB", 14},
+				        {2, 3, "SMB", 25},
+				        {3, 2, "Enterprise", 36},
+				        {4, 1, "SMB", 7},
+				        {5, 4, "SMB", 18},
+				        {6, 3, "Enterprise", 29},
+				        {7, 2, "SMB", 40},
+				        {8, 1, "SMB", 11},
+				        {9, 4, "Enterprise", 22},
+				        {10, 3, "SMB", 33},
+				        {11, 2, "SMB", 4},
+				        {12, 1, "Enterprise", 15},
+				        {13, 4, "SMB", 26},
+				        {14, 3, "SMB", 37},
+				        {15, 2, "Enterprise", 8},
+				        {16, 1, "SMB", 19},
+				        {17, 4, "SMB", 30},
+				        {18, 3, "Enterprise", 41},
+				        {19, 2, "SMB", 12},
+				        {20, 1, "SMB", 23},
+				        {21, 4, "Enterprise", 34},
+				        {22, 3, "SMB", 5},
+				        {23, 2, "SMB", 16},
+				        {24, 1, "Enterprise", 27},
+				        {25, 4, "SMB", 38},
+				        {26, 3, "SMB", 9},
+				        {27, 2, "Enterprise", 20},
+				        {28, 1, "SMB", 31},
+				        {29, 4, "SMB", 42},
+				        {30, 3, "Enterprise", 13},
+				        {31, 2, "SMB", 24},
+				        {32, 1, "SMB", 35},
+				        {33, 4, "Enterprise", 6},
+				        {34, 3, "SMB", 17},
+				        {35, 2, "SMB", 28},
+				        {36, 1, "Enterprise", 39},
+				        {37, 4, "SMB", 10},
+				        {38, 3, "SMB", 21},
+				        {39, 2, "Enterprise", 32},
+				        {40, 1, "SMB", 3}
+				    }
+				)

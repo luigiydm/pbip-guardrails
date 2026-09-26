@@ -1,0 +1,4 @@
+relationship deals_stage
+	fromColumn: Deals.StageId
+	toColumn: Stages.StageId
+

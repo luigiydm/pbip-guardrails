@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pbip-guardrails"
+version = "0.1.0"
+description = "Lint Power BI PBIP projects for bugs the schema validators can't see, and publish them safely from Linux."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Luis Ivan Payero" }]
+requires-python = ">=3.10"
+dependencies = []
+keywords = ["power-bi", "pbip", "tmdl", "pbir", "lint", "ci", "fabric"]
+
+[project.optional-dependencies]
+publish = ["fabric-cicd>=1.3,<2", "azure-identity"]
+dev = ["pytest"]
+
+[project.urls]
+Homepage = "https://luisivanpayero.com"
+
+[project.scripts]
+pbip = "pbip_guardrails.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pbip_guardrails = ["tmdl_gate/Program.cs", "tmdl_gate/app.csproj"]

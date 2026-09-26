@@ -1,0 +1,64 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "a0000000000000000003",
+  "position": {
+    "x": 20,
+    "y": 150,
+    "z": 0,
+    "height": 250,
+    "width": 500
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Stages"
+                    }
+                  },
+                  "Property": "Stage"
+                }
+              },
+              "queryRef": "Stages.Stage",
+              "nativeQueryRef": "Stage"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Deals"
+                    }
+                  },
+                  "Property": "Deals Segment 1"
+                }
+              },
+              "queryRef": "Deals.Deals Segment 1",
+              "nativeQueryRef": "Deals Segment 1"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Deals"
+                    }
+                  },
+                  "Property": "Deals Segment 2"
+                }
+              },
+              "queryRef": "Deals.Deals Segment 2",
+              "nativeQueryRef": "Deals Segment 2"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

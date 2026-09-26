@@ -1,0 +1,20 @@
+# Example CI gate: copy this into the repo that holds your PBIP reports.
+name: pbip-lint
+on:
+  pull_request:
+    paths: ["**/*.Report/**", "**/*.SemanticModel/**"]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-dotnet@v4
+        with: { dotnet-version: "8.0.x" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: pip install "pbip-guardrails @ git+https://github.com/luigiydm/pbip-guardrails.git"
+      - run: npm install -g @microsoft/powerbi-report-authoring-cli
+      # --strict: fail if a validator is missing instead of skipping it
+      - run: pbip lint . --strict --errors-only

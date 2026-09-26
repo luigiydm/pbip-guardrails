@@ -1,0 +1,29 @@
+table Stages
+
+	column StageId
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [StageId]
+
+	column Stage
+		dataType: string
+		summarizeBy: none
+		sourceColumn: [Stage]
+		sortByColumn: Order
+
+	column Order
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Order]
+
+	partition Stages = calculated
+		mode: import
+		source =
+				DATATABLE(
+				    "StageId", INTEGER, "Stage", STRING, "Order", INTEGER,
+				    {
+				        {1, "Lead", 1}, {2, "Qualified", 2}, {3, "Proposal", 3}, {4, "Won", 4}
+				    }
+				)
