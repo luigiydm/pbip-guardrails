@@ -95,9 +95,9 @@ the model and five kinds of level-2 coherence defects in the report. Read the tw
 separately. The **model** has a level-1 defect: the official TMDL parser rejects it, as
 it should. The **report** is structurally valid: the PBIR validator returns zero errors
 and flags only what it's built to flag, the visual that falls outside the canvas. Yet
-that same report has coherence defects. The card filtered to *two* stages feeds a
-measure doing `MAX(Stages[Order])`, so it shows stage 3 while its filter says stages
-2–3. Nothing about that is malformed; it's a level-2 problem.
+that same report has coherence defects. The card's filter allows stages 2 and 3, but the
+measure's `MAX(Stages[Order])` resolves only stage 3, so the value shown may not match
+the context the visual appears to have. Nothing about that is malformed; it's a level-2 problem.
 
 ## The coherence checks
 
