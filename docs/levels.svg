@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" width="960" height="330" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker></defs>
+<rect width="960" height="330" rx="24" fill="#FFFFFF"/>
+<text x="480" y="44" text-anchor="middle" font-size="16" font-weight="700" fill="#0F172A">Three different questions, three kinds of check</text>
+<rect x="45" y="70" width="270" height="210" rx="18" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6"/>
+<text x="67" y="108" text-anchor="start" font-size="13" font-weight="700" fill="#475569">LEVEL 1 · VALID</text>
+<text x="67" y="146" text-anchor="start" font-size="19" font-weight="700" fill="#0F172A">Can Power BI</text>
+<text x="67" y="172" text-anchor="start" font-size="19" font-weight="700" fill="#0F172A">parse it?</text>
+<line x1="67" y1="218" x2="293" y2="218" stroke="#CBD5E1"/>
+<text x="67" y="244" text-anchor="start" font-size="14.5" font-weight="500" fill="#475569">Microsoft validators</text>
+<text x="67" y="264" text-anchor="start" font-size="14.5" font-weight="500" fill="#475569">(TMDL and PBIR)</text>
+<line x1="321" y1="175.0" x2="354" y2="175.0" stroke="#475569" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="360" y="70" width="270" height="210" rx="18" fill="#E0F2FE" stroke="#0074A8" stroke-width="2.4"/>
+<text x="382" y="108" text-anchor="start" font-size="13" font-weight="700" fill="#0074A8">LEVEL 2 · COHERENT</text>
+<text x="382" y="146" text-anchor="start" font-size="19" font-weight="700" fill="#0F172A">Do visual and measure</text>
+<text x="382" y="172" text-anchor="start" font-size="19" font-weight="700" fill="#0F172A">make sense together?</text>
+<line x1="382" y1="218" x2="608" y2="218" stroke="#CBD5E1"/>
+<text x="382" y="244" text-anchor="start" font-size="14.5" font-weight="700" fill="#004F8B">pbip-guardrails</text>
+<line x1="636" y1="175.0" x2="669" y2="175.0" stroke="#475569" stroke-width="1.8" marker-end="url(#a)"/>
+<rect x="675" y="70" width="270" height="210" rx="18" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.6"/>
+<text x="697" y="108" text-anchor="start" font-size="13" font-weight="700" fill="#475569">LEVEL 3 · CORRECT</text>
+<text x="697" y="146" text-anchor="start" font-size="19" font-weight="700" fill="#0F172A">Is the number</text>
+<text x="697" y="172" text-anchor="start" font-size="19" font-weight="700" fill="#0F172A">actually true?</text>
+<line x1="697" y1="218" x2="923" y2="218" stroke="#CBD5E1"/>
+<text x="697" y="244" text-anchor="start" font-size="14.5" font-weight="500" fill="#475569">People + reconciliation</text>
+<text x="697" y="264" text-anchor="start" font-size="14.5" font-weight="500" fill="#475569">against the source data</text>
+<text x="480" y="312" text-anchor="middle" font-size="13.5" font-weight="400" fill="#475569">Each level answers a question the previous one can't.</text>
+</svg>

@@ -1,20 +1,77 @@
 # pbip-guardrails
 
-**Lint Power BI PBIP projects for bugs the schema validators can't see, and publish them safely from Linux.**
+Lint cross-file coherence issues in Power BI PBIP projects, and publish safely from Linux.
 
-Lint and publish PBIP projects without Power BI Desktop.
+<p align="center">
+  <img src="docs/levels.svg" width="820" alt="Three levels. Level 1, valid: can Power BI parse it? Answered by Microsoft's validators. Level 2, coherent: do visual and measure make sense together? Answered by pbip-guardrails. Level 3, correct: is the number actually true? Answered by people and reconciliation against the source data.">
+</p>
 
-Power BI's project format (PBIP: TMDL for the model, PBIR for the report) turned
-reports into plain text you can diff, review and put in CI. This toolkit is that CI
-step, plus a way to publish from Linux that never overwrites the real report on the
-first try.
-
+```bash
+pip install "pbip-guardrails @ git+https://github.com/luigiydm/pbip-guardrails.git"
+pbip lint path/to/reports
 ```
-pip install "pbip-guardrails[publish] @ git+https://github.com/luigiydm/pbip-guardrails.git"
-pbip lint path/to/reports --family 'Segment (\d+)'
+
+On the [broken sample](examples/broken), an excerpt of what it reports:
+
+```text
+$ pbip lint examples/broken --family 'Segment (\d+)'
+━━ Sales
+  coherence checks: 7 finding(s)
+  'Pipeline' [filters] cardVisual b0000000000000000001: Order IN ['2L', '3L']
+      -> ['Deals at stage'] depend(s) on the row's Order: the value shown may not match the filter
+  ...
+  'Pipeline' [refs] cardVisual b0000000000000000004: measure 'Total deals' does not exist in the model
+  ...
+  tmdl: FAIL
+           	Detailed error - Unexpected line type: Empty!
+           	Document - './tables/Deals'
+           	Line Number - 7
+  ...
 ```
+
+7 coherence findings in total, plus a TMDL parser failure and two PBIR layout warnings.
+
+<details>
+<summary>See the full output for the broken sample</summary>
+
+```text
+$ pbip lint examples/broken --family 'Segment (\d+)'
+━━ Sales
+  coherence checks: 7 finding(s)
+  'Pipeline' [filters] cardVisual b0000000000000000001: Order IN ['2L', '3L']
+      -> ['Deals at stage'] depend(s) on the row's Order: the value shown may not match the filter
+  'Pipeline' [filters] cardVisual b0000000000000000002: Order IN ['3L', '3L'] (REPEATED VALUES)
+      -> a repeated value gives away a hand-edited filter
+  'Pipeline' [family] clusteredBarChart b0000000000000000003 mixes 2 families -> 1: ['Deals Segment 1']; 2: ['Avg days Segment 2']
+      -> it crosses the figure of one segment with another's (e.g. the volume of one population and the time of another)
+  'Pipeline' [refs] cardVisual b0000000000000000004: measure 'Total deals' does not exist in the model
+  'Pipeline' [geometry] cardVisual b0000000000000000006: (1150,640) 240x110 is outside the 1280x720 canvas
+  'Pipeline' [geometry] clusteredBarChart a0000000000000000004 and clusteredBarChart b0000000000000000005 overlap 98%
+      -> same place and same size: the one below can't be seen, usually a leftover duplicate
+  [tmdl] Deals.tmdl:6 /// description followed by a blank line
+      -> Desktop refuses to open the WHOLE project (InvalidLineType: Empty)
+  tmdl: FAIL
+    FAIL  TmdlFormatException
+           TMDL Format Error:
+           	Parsing error type - InvalidLineType
+           	Detailed error - Unexpected line type: Empty!
+           	Document - './tables/Deals'
+           	Line Number - 7
+  pbir: OK
+    result=succeededWithWarnings  errors=0  warnings=2
+    [   1] WARNING PBIR_LAYOUT_OUT_OF_BOUNDS_WIDTH
+            'Pipeline' Visual extends beyond page width (x:1150 + w:240 = 1390 > 1280)
+    [   1] WARNING PBIR_LAYOUT_OUT_OF_BOUNDS_HEIGHT
+            'Pipeline' Visual extends beyond page height (y:640 + h:110 = 750 > 720)
+```
+
+</details>
 
 ## Valid is not the same as correct
+
+Power BI's project format turned reports into plain text you can diff, review and put
+in CI. This project is that CI step, plus a way to publish from Linux that never
+overwrites the real report on the first try.
 
 Microsoft can tell you a PBIP is valid. That doesn't mean the report is correct.
 There are three different questions, and each needs a different kind of check:
@@ -34,40 +91,13 @@ level 2 bugs live: the two halves of the contract sit in different folders
 (`X.Report` and `X.SemanticModel`).
 
 The sample in [`examples/broken`](examples/broken) contains one level-1 TMDL defect in
-the model and five kinds of level-2 coherence defects in the report, the kind that
-reach production:
-
-```
-$ pbip lint examples/broken --family 'Segment (\d+)'
-━━ Sales
-  coherence checks: 7 finding(s)
-  'Pipeline' [filters] cardVisual b0…01: Order IN ['2L', '3L']
-      -> ['Deals at stage'] resolve(s) the row with that column -> it computes a different value from the one it shows
-  'Pipeline' [filters] cardVisual b0…02: Order IN ['3L', '3L'] (REPEATED VALUES)
-      -> a repeated value gives away a hand-edited filter
-  'Pipeline' [family] clusteredBarChart b0…03 mixes 2 families -> 1: ['Deals Segment 1']; 2: ['Avg days Segment 2']
-      -> it crosses the figure of one segment with another's
-  'Pipeline' [refs] cardVisual b0…04: measure 'Total deals' does not exist in the model
-  'Pipeline' [geometry] cardVisual b0…06: (1150,640) 240x110 is outside the 1280x720 canvas
-  'Pipeline' [geometry] clusteredBarChart a0…04 and clusteredBarChart b0…05 overlap 98%
-      -> same place and same size: the one below can't be seen, usually a leftover duplicate
-  [tmdl] Deals.tmdl:6 /// description followed by a blank line
-      -> Desktop refuses to open the WHOLE project (InvalidLineType: Empty)
-  tmdl: FAIL
-    TMDL Format Error: Unexpected line type: Empty!  Document - './tables/Deals'  Line Number - 7
-  pbir: OK
-    result=succeededWithWarnings  errors=0  warnings=2
-    [   1] WARNING PBIR_LAYOUT_OUT_OF_BOUNDS_WIDTH
-    [   1] WARNING PBIR_LAYOUT_OUT_OF_BOUNDS_HEIGHT
-```
-
-Read the two halves separately. The **model** has a level-1 defect: the official TMDL
-parser rejects it, as it should. The **report** is structurally valid: the PBIR
-validator returns zero errors and flags only what it's built to flag, the visual that
-falls outside the canvas. Yet that same report has coherence defects. The card
-filtered to *two* stages feeds a measure doing `MAX(Stages[Order])`, so it shows
-stage 3 while its filter says stages 2–3. Nothing about that is malformed; it's a
-level-2 problem.
+the model and five kinds of level-2 coherence defects in the report. Read the two halves
+separately. The **model** has a level-1 defect: the official TMDL parser rejects it, as
+it should. The **report** is structurally valid: the PBIR validator returns zero errors
+and flags only what it's built to flag, the visual that falls outside the canvas. Yet
+that same report has coherence defects. The card filtered to *two* stages feeds a
+measure doing `MAX(Stages[Order])`, so it shows stage 3 while its filter says stages
+2–3. Nothing about that is malformed; it's a level-2 problem.
 
 ## The coherence checks
 

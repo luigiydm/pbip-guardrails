@@ -281,8 +281,8 @@ def run_checks(report_dir: Path, model_dir: Path | None = None, family: str | No
                         continue  # no measure of this visual depends on that column
                     note = " (REPEATED VALUES)" if repeated else ""
                     if culprits:
-                        why = (f"{culprits} resolve(s) the row with that column -> "
-                               "it computes a different value from the one it shows")
+                        why = (f"{culprits} depend(s) on the row's {col}: "
+                               "the value shown may not match the filter")
                     elif repeated:
                         why = "a repeated value gives away a hand-edited filter"
                     else:
